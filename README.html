@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Auto Prime | Sonhos em Movimento</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+
+    <a href="#inicio" class="logo">
+
+        <div class="logo-name">
+            AUTO<span>PRIME</span>
+        </div>
+
+        <small>
+            SONHOS EM MOVIMENTO
+        </small>
+
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="#inicio" class="active">
+            Início
+        </a>
+
+        <a href="#veiculos">
+            Veículos
+        </a>
+
+        <a href="#sobre">
+            Sobre
+        </a>
+
+        <a href="#contato">
+            Contato
+        </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <button class="search-icon">
+            ⌕
+        </button>
+
+        <button class="login">
+            ♙ Entrar
+        </button>
+
+        <button class="register">
+            ♙ Criar conta
+        </button>
+
+        <div class="quality">
+            QUALIDADE<br>
+            <strong>CONFIANÇA</strong><br>
+            SEMPRE COM VOCÊ
+        </div>
+
+    </div>
+
+
+    <button class="menu-btn">
+        ☰
+    </button>
+
+</header>
+
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero" id="inicio">
+
+
+    <div class="hero-content">
+
+
+        <div class="eyebrow">
+
+            <span></span>
+
+            BEM-VINDO À AUTO PRIME
+
+        </div>
+
+
+        <h1>
+
+            O CARRO DOS SEUS
+
+            <strong>
+                SONHOS ESTÁ AQUI
+            </strong>
+
+        </h1>
+
+
+        <p>
+
+            Veículos selecionados, procedência garantida
+            e o melhor atendimento. Na Auto Prime, você
+            dirige mais do que um carro, você conquista
+            o seu próximo capítulo.
+
+        </p>
+
+
+        <!-- BUSCA -->
+
+        <form class="search-box" id="searchForm">
+
+            <span>⌕</span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Qual carro você está procurando?"
+            >
+
+            <button>
+                Pesquisar →
+            </button>
+
+        </form>
+
+
+        <!-- BENEFÍCIOS -->
+
+        <div class="benefits">
+
+            <div>
+
+                <strong>♢</strong>
+
+                <span>
+                    VEÍCULOS<br>
+                    REVISADOS
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>♢</strong>
+
+                <span>
+                    COMPRA<br>
+                    SEGURA
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>%</strong>
+
+                <span>
+                    AS MELHORES<br>
+                    CONDIÇÕES
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>♧</strong>
+
+                <span>
+                    ATENDIMENTO<br>
+                    ESPECIALIZADO
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- CARRO PRINCIPAL -->
+
+    <div class="hero-car">
+
+        <div class="red-light"></div>
+
+
+        <img
+            id="heroImage"
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/BMW%20X1%20%282022-present%29.jpg"
+            alt="BMW X1"
+        >
+
+
+        <div class="hero-message">
+
+            <span>
+                Mais que carros,
+            </span>
+
+            <strong>
+                realizamos<br>
+                sonhos.
+            </strong>
+
+        </div>
+
+
+        <button
+            class="slider-arrow left"
+            id="previous"
+        >
+            ‹
+        </button>
+
+
+        <button
+            class="slider-arrow right"
+            id="next"
+        >
+            ›
+        </button>
+
+
+        <div class="slider-dots">
+
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= VEÍCULOS ================= -->
+
+<section class="vehicles" id="veiculos">
+
+
+    <div class="section-title">
+
+        <div>
+
+            <div class="eyebrow">
+
+                <span></span>
+
+                DESTAQUES
+
+            </div>
+
+
+            <h2>
+                VEÍCULOS EM
+                <strong>DESTAQUE</strong>
+            </h2>
+
+        </div>
+
+
+        <button
+            class="outline-button"
+            id="showAll"
+        >
+            Ver todos os veículos →
+        </button>
+
+    </div>
+
+
+
+    <div
+        class="cars-grid"
+        id="carsGrid"
+    ></div>
+
+
+</section>
+
+
+
+<!-- ================= SOBRE ================= -->
+
+<section class="about" id="sobre">
+
+
+    <div class="about-image">
+
+        <div class="showroom-logo">
+            AUTO<span>PRIME</span>
+        </div>
+
+    </div>
+
+
+    <div class="about-text">
+
+        <div class="eyebrow">
+
+            <span></span>
+
+            SOBRE NÓS
+
+        </div>
+
+
+        <h2>
+
+            CONFIANÇA É O
+            <strong>NOSSO COMBUSTÍVEL.</strong>
+
+        </h2>
+
+
+        <p>
+
+            Na Auto Prime, acreditamos que cada carro
+            tem uma história e pode ser o começo de uma
+            nova vida. Trabalhamos com transparência,
+            qualidade e um atendimento próximo para você
+            escolher o próximo capítulo.
+
+        </p>
+
+
+        <button class="outline-button">
+            Conheça a Auto Prime →
+        </button>
+
+    </div>
+
+
+    <div class="statistics">
+
+        <div>
+
+            <strong>
+                +500
+            </strong>
+
+            <span>
+                veículos vendidos
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                +1.000
+            </strong>
+
+            <span>
+                clientes satisfeitos
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                4,9
+            </strong>
+
+            <span>
+                avaliação no Google
+            </span>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================= CHAT ================= -->
+
+<aside class="chat" id="chat">
+
+
+    <div class="chat-header">
+
+        <div>
+
+            <strong>
+                ♔ Auto Prime IA
+            </strong>
+
+            <small>
+                ● Online
+            </small>
+
+        </div>
+
+
+        <button id="closeChat">
+            ×
+        </button>
+
+    </div>
+
+
+    <div
+        class="chat-content"
+        id="chatContent"
+    >
+
+        <div class="message">
+
+            Olá! 👋
+
+            <br><br>
+
+            Sou o assistente virtual da Auto Prime.
+            Posso te ajudar a encontrar o carro ideal,
+            tirar dúvidas ou mostrar nossas ofertas!
+
+        </div>
+
+
+        <div class="message">
+
+            Como posso ajudar você hoje?
+
+        </div>
+
+
+        <button class="quick-option">
+            🚗 Quero ver os veículos em promoção
+        </button>
+
+
+        <button class="quick-option">
+            🔎 Qual carro é mais econômico?
+        </button>
+
+
+        <button class="quick-option">
+            🚙 Tem SUV até R$ 100 mil?
+        </button>
+
+
+        <button class="quick-option">
+            👤 Falar com um atendente
+        </button>
+
+    </div>
+
+
+    <form
+        class="chat-form"
+        id="chatForm"
+    >
+
+        <input
+            id="chatInput"
+            placeholder="Digite sua mensagem..."
+        >
+
+        <button>
+            ➤
+        </button>
+
+    </form>
+
+
+</aside>
+
+
+<button
+    class="chat-button"
+    id="openChat"
+>
+    ♔
+</button>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer id="contato">
+
+    <span>
+        ⌖ Fortaleza - CE
+    </span>
+
+    <span>
+        Auto Prime · Todos os direitos reservados.
+    </span>
+
+    <span>
+        ◉ ◉ ◉ &nbsp; Juntos, vamos mais longe.
+    </span>
+
+</footer>
+
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
