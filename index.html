@@ -72,11 +72,11 @@
             ⌕
         </button>
 
-        <button class="login">
+        <button class="login" id="loginButton">
             ♙ Entrar
         </button>
 
-        <button class="register">
+        <button class="register" id="registerButton">
             ♙ Criar conta
         </button>
 
@@ -516,7 +516,82 @@
     ♔
 </button>
 
+<!-- ================= CADASTRO ================= -->
 
+<div class="modal" id ="registerModal">
+
+    <div class="modal-content">
+
+        <button class="close-modal" id="closeReister">
+            *
+        </button>
+
+        <h2>Criar conta</h2>
+
+        <p>
+            Cadastre-se na Auto Prime
+        </p>
+
+        <form id="registerForm">
+
+            <label for="registerName">
+                Nome
+            </label>
+
+            <input
+                type="text"
+                id="registerName"
+                placeholder="Digite seu nome"
+                required
+            >
+
+
+            <label for="registerEmail">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="registerEmail"
+                placeholder="Digite seu e-mail"
+                required
+            >
+
+
+            <label for="registerPassword">
+                Senha
+            </label>
+
+            <input
+                type="password"
+                id="registerPassword"
+                placeholder="Digite sua senha"
+                required
+            >
+
+
+            <label for="registerConfirmPassword">
+                Confirmar senha
+            </label>
+
+            <input
+                type="password"
+                id="registerConfirmPassword"
+                placeholder="Digite a senha novamente"
+                required
+            >
+
+            <button type="submit">
+                Criar conta
+            </button>
+
+        </form>
+
+        <p id="registerMassage"></p>
+
+    </div>
+
+</div>
 
 <!-- ================= FOOTER ================= -->
 
