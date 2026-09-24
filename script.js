@@ -562,3 +562,87 @@ function sendMessage(text) {
     }, 500);
 
 }
+
+const registerButton = document.getElementById("registerButton");
+
+const registerModal = document.getElementById("registerModal");
+
+const closeRegister = document.getElementById("closeRegister");
+
+const registerForm = document.getElementById("registerForm");
+
+const registerMessage = document.getElementById("registerMessage");
+
+
+// Abrir cadastro
+registerButton.addEventListener("click", () => {
+
+    registerModal.style.display = "flex";
+
+});
+
+
+// Fechar cadastro
+closeRegister.addEventListener("click", () => {
+
+    registerModal.style.display = "none";
+
+});
+
+
+// Cadastro
+registerForm.addEventListener("submit", (event) => {
+
+    event.preventDefault();
+
+
+    const name =
+        document.getElementById("registerName").value;
+
+    const email =
+        document.getElementById("registerEmail").value;
+
+    const password =
+        document.getElementById("registerPassword").value;
+
+    const confirmPassword =
+        document.getElementById("registerConfirmPassword").value;
+
+
+    // Verificar se as senhas são iguais
+    if (password !== confirmPassword) {
+
+        registerMessage.textContent =
+            "As senhas não são iguais.";
+
+        return;
+
+    }
+
+
+    // Criar objeto do usuário
+    const user = {
+
+        name: name,
+
+        email: email,
+
+        password: password
+
+    };
+
+
+    // Salvar no navegador
+    localStorage.setItem(
+        "autoPrimeUser",
+        JSON.stringify(user)
+    );
+
+
+    registerMessage.textContent =
+        "Conta criada com sucesso!";
+
+
+    registerForm.reset();
+
+});
