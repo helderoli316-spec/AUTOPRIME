@@ -497,7 +497,6 @@ input {
             transparent
         );
 
-    filter: blur(15px);
 }
 
 
@@ -518,7 +517,7 @@ input {
         contrast(1.2)
         drop-shadow(0 20px 25px #000);
 
-    transition: .5s;
+    transition: opacity .5s;
 }
 
 
@@ -750,7 +749,7 @@ input {
 
     border: 1px solid #202024;
 
-    transition: .3s;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
 
     overflow: hidden;
 }
@@ -795,7 +794,7 @@ input {
 
     object-fit: cover;
 
-    transition: .4s;
+    transition: transform .4s, filter .4s;
 
     filter:
         brightness(.8)
@@ -1451,127 +1450,171 @@ footer {
     }
 
 }
-/* ================= MODAL CADASTRO ================= */
+
+
+/* ================= CADASTRO (MODAL) ================= */
 
 .modal {
-
-    display: none;
-
     position: fixed;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background: rgba(0, 0, 0, 0.7);
-
+    inset: 0;
+    background: #000c;
+    display: none;
     align-items: center;
     justify-content: center;
-
-    z-index: 9999;
-
+    padding: 20px;
+    z-index: 500;
 }
 
-
-.modal-content {
-
-    position: relative;
-
-    width: 90%;
-    max-width: 420px;
-
-    background: white;
-
-    padding: 35px;
-
-    border-radius: 15px;
-
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-
-}
-
-
-.modal-content h2 {
-
-    margin-bottom: 10px;
-
-}
-
-
-.modal-content p {
-
-    margin-bottom: 25px;
-
-}
-
-
-.modal-content form {
-
+.modal.open {
     display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
 }
 
-
-.modal-content label {
-
-    font-weight: 600;
-
+.modal-box {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: #0c0c0f;
+    border: 1px solid #29292e;
+    border-top: 2px solid #ed142b;
+    box-shadow: 0 20px 60px #000;
+    padding: 28px;
 }
 
-
-.modal-content input {
-
-    padding: 13px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 8px;
-
-    font-size: 15px;
-
+.modal-box h2 {
+    font-family: Montserrat;
+    font-size: 22px;
+    margin: 10px 0 18px;
 }
 
-
-.modal-content form button {
-
-    margin-top: 15px;
-
-    padding: 14px;
-
-    border: none;
-
-    border-radius: 8px;
-
-    background: #e30613;
-
-    color: white;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
+.modal-box h2 strong {
+    color: #ed142b;
 }
 
-
-.close-modal {
-
+.modal-close {
     position: absolute;
-
-    right: 15px;
-    top: 15px;
-
-    border: none;
-
+    top: 10px;
+    right: 14px;
     background: none;
-
-    font-size: 28px;
-
+    border: 0;
+    color: #aaa;
+    font-size: 26px;
     cursor: pointer;
+}
 
+.modal-close:hover {
+    color: #ed142b;
+}
+
+.modal-box form label {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: #ccc;
+}
+
+.modal-box form input[type="text"],
+.modal-box form input[type="email"],
+.modal-box form input[type="tel"],
+.modal-box form input[type="password"] {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 11px;
+    background: #111113;
+    border: 1px solid #333338;
+    border-radius: 3px;
+    color: white;
+    font-size: 13px;
+    outline: none;
+}
+
+.modal-box form input:focus {
+    border-color: #ed142b;
+}
+
+.modal-box form input.invalid {
+    border-color: #ff4d5e;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.error {
+    display: block;
+    min-height: 14px;
+    margin-top: 4px;
+    color: #ff4d5e;
+    font-size: 11px;
+}
+
+.modal-box form label.check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 0;
+    font-size: 11px;
+    color: #999;
+    cursor: pointer;
+}
+
+.check input {
+    accent-color: #ed142b;
+    margin-top: 2px;
+}
+
+.submit-button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 13px;
+    background: #ed142b;
+    border: 0;
+    border-radius: 3px;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background: #c40f23;
+}
+
+.form-success {
+    margin: 12px 0 0;
+    color: #5bc96b;
+    font-size: 12px;
+    text-align: center;
+}
+
+@media(max-width: 500px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+
+
+/* ================= LOGIN ================= */
+
+.switch-text {
+    margin: 16px 0 0;
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+}
+
+.switch-text a {
+    color: #ed142b;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.switch-text a:hover {
+    text-decoration: underline;
 }
