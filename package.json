@@ -1,0 +1,19 @@
+{
+  "name": "auto-prime",
+  "version": "1.0.0",
+  "description": "Site Auto Prime com cadastro e login (Node.js + PostgreSQL no Railway)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0"
+  }
+}
