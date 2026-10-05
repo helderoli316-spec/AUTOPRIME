@@ -775,6 +775,16 @@ loginForm.addEventListener("submit", async function(event) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userName", data.name);
 
+        // administrador: vai direto para o painel
+        if (data.admin) {
+
+            showMessage(loginOk, "Acesso de administrador! Abrindo o painel...", true);
+
+            setTimeout(() => { window.location.href = "/admin.html"; }, 800);
+
+            return;
+        }
+
         showMessage(loginOk, `Bem-vindo, ${data.name.split(" ")[0]}! 🎉`, true);
 
         loginForm.reset();

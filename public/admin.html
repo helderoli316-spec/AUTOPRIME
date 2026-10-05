@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <title>Painel Administrativo | Auto Prime</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- mesmo CSS do site + estilos do painel -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+
+</head>
+
+<body>
+
+    <!-- ================= HEADER (igual ao do site) ================= -->
+
+    <header class="header">
+
+        <a href="/" class="logo">
+
+            <div class="logo-name">
+                AUTO<span>PRIME</span>
+            </div>
+
+            <small>
+                SONHOS EM MOVIMENTO
+            </small>
+
+        </a>
+
+        <div class="header-actions">
+
+            <span class="admin-badge" id="adminName"></span>
+
+            <a href="/" class="login admin-link">← Voltar ao site</a>
+
+            <button class="register" id="logout">Sair</button>
+
+        </div>
+
+    </header>
+
+
+    <main class="admin">
+
+        <div class="eyebrow"><span></span> ÁREA RESTRITA</div>
+
+        <h1 class="admin-title">
+            PAINEL <strong>ADMINISTRATIVO</strong>
+        </h1>
+
+        <p class="admin-status" id="status">Carregando dados...</p>
+
+
+        <!-- ============ INDICADORES ============ -->
+
+        <section class="kpis" id="kpis" hidden>
+
+            <article class="kpi">
+                <span>Usuários cadastrados</span>
+                <strong id="kpiUsers">0</strong>
+            </article>
+
+            <article class="kpi">
+                <span>Carros no site</span>
+                <strong id="kpiCars">0</strong>
+            </article>
+
+            <article class="kpi">
+                <span>Carros vendidos</span>
+                <strong id="kpiSold">0</strong>
+            </article>
+
+            <article class="kpi">
+                <span>Média de vendas por ano</span>
+                <strong id="kpiAverage">0</strong>
+            </article>
+
+        </section>
+
+
+        <!-- ============ GRÁFICOS ============ -->
+
+        <section class="charts" id="charts" hidden>
+
+            <article class="panel">
+                <h2>Vendas por <strong>ano</strong></h2>
+                <p class="panel-note" id="yearNote"></p>
+                <div class="chart" id="chartYears"></div>
+            </article>
+
+            <article class="panel">
+                <h2>Modelos <strong>mais vendidos</strong></h2>
+                <p class="panel-note">Top 8 por quantidade de vendas</p>
+                <div class="chart" id="chartModels"></div>
+            </article>
+
+            <article class="panel">
+                <h2>Carros <strong>no site x vendidos</strong></h2>
+                <p class="panel-note">Estoque atual comparado ao total de vendas</p>
+                <div class="chart" id="chartCars"></div>
+            </article>
+
+            <article class="panel">
+                <h2>Novos <strong>cadastros</strong></h2>
+                <p class="panel-note">Usuários criados nos últimos 6 meses</p>
+                <div class="chart" id="chartUsers"></div>
+            </article>
+
+        </section>
+
+
+        <!-- ============ USUÁRIOS ============ -->
+
+        <section class="panel users-panel" id="usersPanel" hidden>
+
+            <div class="users-head">
+
+                <div>
+                    <h2>Usuários <strong>cadastrados</strong></h2>
+                    <p class="panel-note" id="usersCount"></p>
+                </div>
+
+                <input type="search" id="userSearch" placeholder="Buscar por nome ou e-mail" aria-label="Buscar usuário">
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Cadastro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersBody"></tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <span>⌖ Fortaleza - CE</span>
+
+        <span>Auto Prime · Painel administrativo</span>
+
+        <span>Acesso restrito</span>
+
+    </footer>
+
+
+    <script src="admin.js"></script>
+
+</body>
+
+</html>
