@@ -15,3 +15,10 @@ Site em Node.js (Express) + PostgreSQL, pronto para o Railway.
    - Add Reference Variable → `DATABASE_URL` (do Postgres)
    - `JWT_SECRET` = string longa e aleatória
 5. Settings → Networking → gere um domínio público.
+
+## Painel de administrador
+- Acesso: faça login com o e-mail definido em `ADMIN_EMAIL` (padrão: leviangelo.celular@gmail.com). Você é levado para `/admin.html`.
+- **Crie a conta de administrador primeiro** (botão "Criar conta") logo após o deploy, antes de divulgar o site.
+- Variáveis: `ADMIN_EMAIL` (opcional) e `SEED_DEMO=true` (opcional, só para teste: cria vendas fictícias; remova depois).
+- Para registrar uma venda real, rode no Postgres (Railway → Database → Data → Query):
+  `INSERT INTO sales (model, price, sold_at) VALUES ('BMW X1 sDrive20i', 219900, '2026-09-10');`
