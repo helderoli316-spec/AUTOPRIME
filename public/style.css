@@ -116,7 +116,7 @@ input {
 
     text-decoration: none;
 
-    font-size: 12px;
+    font-size: 14px;
 
     height: 100%;
 
@@ -193,7 +193,7 @@ input {
 
     border-radius: 4px;
 
-    font-size: 11px;
+    font-size: 13px;
 
     cursor: pointer;
 }
@@ -211,7 +211,7 @@ input {
 
     border-radius: 4px;
 
-    font-size: 11px;
+    font-size: 13px;
 
     cursor: pointer;
 }
@@ -389,7 +389,7 @@ input {
 
     color: white;
 
-    font-size: 10px;
+    font-size: 13px;
 }
 
 
@@ -405,7 +405,7 @@ input {
 
     cursor: pointer;
 
-    font-size: 10px;
+    font-size: 13px;
 
     font-weight: 700;
 }
@@ -445,7 +445,7 @@ input {
 
     color: #ddd;
 
-    font-size: 7px;
+    font-size: 11px;
 
     font-weight: 700;
 
@@ -714,7 +714,7 @@ input {
 
     border-radius: 3px;
 
-    font-size: 9px;
+    font-size: 11px;
 
     cursor: pointer;
 }
@@ -869,7 +869,7 @@ input {
 
     margin: 0 0 5px;
 
-    font-size: 11px;
+    font-size: 14px;
 }
 
 
@@ -877,7 +877,7 @@ input {
 
     color: #888;
 
-    font-size: 7px;
+    font-size: 10px;
 
     margin-bottom: 12px;
 }
@@ -897,7 +897,7 @@ input {
 
     color: #ed142b;
 
-    font-size: 14px;
+    font-size: 17px;
 
     font-weight: 800;
 }
@@ -913,7 +913,7 @@ input {
 
     padding: 6px 9px;
 
-    font-size: 7px;
+    font-size: 10px;
 
     cursor: pointer;
 }
@@ -1024,7 +1024,7 @@ input {
 
     color: #999;
 
-    font-size: 8px;
+    font-size: 11px;
 
     line-height: 1.6;
 }
@@ -1060,7 +1060,7 @@ input {
 
     color: #888;
 
-    font-size: 7px;
+    font-size: 10px;
 }
 
 
