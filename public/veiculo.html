@@ -87,4 +87,117 @@
         .versao { color: var(--suave); margin-top: 6px; }
 
         .preco {
-            color:
+            color: var(--vermelho);
+            font-size: 34px;
+            font-weight: 800;
+            margin: 20px 0;
+        }
+
+        dl {
+            border-top: 1px solid var(--borda);
+            padding-top: 16px;
+        }
+
+        dl div {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        dt { color: var(--suave); }
+        dd { font-weight: 600; }
+
+        .botao {
+            display: block;
+            margin-top: 24px;
+            padding: 14px;
+            text-align: center;
+            background: var(--vermelho);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        .botao:hover,
+        .botao:focus-visible { filter: brightness(1.15); }
+
+        .erro { text-align: center; padding: 80px 0; }
+        .erro p { color: var(--suave); margin: 12px 0 24px; }
+
+        @media (max-width: 800px) {
+            .anuncio { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html">AUTO<span>PRIME</span></a>
+    </header>
+
+    <main>
+        <a class="voltar" href="index.html">← Voltar para os veículos</a>
+
+        <div id="anuncio"></div>
+    </main>
+
+    <script src="cars.js"></script>
+
+    <script>
+        const id = Number(new URLSearchParams(window.location.search).get("id"));
+        const car = cars.find(c => c.id === id);
+        const area = document.querySelector("#anuncio");
+
+        if (!car) {
+
+            document.title = "Auto Prime | Veículo não encontrado";
+
+            area.innerHTML = `
+                <div class="erro">
+                    <h1>Veículo não encontrado</h1>
+                    <p>Esse anúncio não existe ou foi removido.</p>
+                    <a class="botao" href="index.html">Ver todos os veículos</a>
+                </div>
+            `;
+
+        } else {
+
+            document.title = car.name + " | Auto Prime";
+
+            // usa a foto grande (campo "foto" no cars.js) se existir;
+            // se não existir, usa a mesma foto dos cards
+            const fotoGrande = car.foto || car.image;
+
+            area.innerHTML = `
+                <section class="anuncio">
+
+                    <div class="foto">
+                        <img src="${fotoGrande}" alt="${car.name}">
+                    </div>
+
+                    <div class="dados">
+                        <h1>${car.name}</h1>
+                        <p class="versao">${car.version}</p>
+
+                        <p class="preco">${car.price}</p>
+
+                        <dl>
+                            <div><dt>Ano</dt><dd>${car.year}</dd></div>
+                            <div><dt>Quilometragem</dt><dd>${car.km}</dd></div>
+                            <div><dt>Motor</dt><dd>${car.version}</dd></div>
+                            <div><dt>Condição</dt><dd>Seminovo</dd></div>
+                        </dl>
+
+                        <a class="botao" href="index.html">Ver outros veículos</a>
+                    </div>
+
+                </section>
+            `;
+        }
+    </script>
+
+</body>
+</html>
