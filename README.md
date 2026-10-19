@@ -30,3 +30,9 @@ Site em Node.js (Express) + PostgreSQL, pronto para o Railway.
 - Clicar no avatar abre `/perfil.html`: dados, foto, carros comprados, favoritos e carros que está vendendo.
 - O botão "Sair" (no topo do site e no perfil) encerra a sessão.
 - As tabelas novas (`favorites`, `listings`) e a coluna `users.avatar` são criadas sozinhas ao iniciar o servidor.
+
+## Carros do site
+- A lista de carros fica em `public/cars.js` (usada pela página inicial, pelo perfil e por `veiculo.html`). Para adicionar um carro, copie um bloco e use um `id` novo.
+- Clicar na foto, no nome ou em "Ver detalhes" de um carro abre a tela do carro (foto + informações). Dá para fechar no ×, clicando fora ou com ESC.
+- "Abrir página do anúncio" leva para `veiculo.html?id=...`.
+- Favoritos são salvos pelo nome do carro, então o nome no `cars.js` precisa ser exato.

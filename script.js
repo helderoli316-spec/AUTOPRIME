@@ -1,71 +1,6 @@
 
 
-const cars = [
-
-    {
-        name: "Volkswagen Golf GTI",
-
-        version: "2.0 TSI DSG",
-
-        year: "2021",
-
-        km: "42.000 km",
-
-        price: "R$ 189.900",
-
-        image:
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Volkswagen%20Golf%20GTI%20%282021%29%20%2852926196503%29.jpg?width=640"
-    },
-
-
-    {
-        name: "Toyota Corolla GR-S",
-
-        version: "2.0 Dynamic Force",
-
-        year: "2023",
-
-        km: "29.000 km",
-
-        price: "R$ 169.900",
-
-        image:
-        "https://commons.wikimedia.org/wiki/Special:FilePath/2023%20Toyota%20Corolla%20Altis%20HEV%20GR%20Sport.jpg?width=640"
-    },
-
-
-    {
-        name: "BMW X1 sDrive20i",
-
-        version: "2.0 Turbo",
-
-        year: "2022",
-
-        km: "35.000 km",
-
-        price: "R$ 219.900",
-
-        image:
-        "https://commons.wikimedia.org/wiki/Special:FilePath/BMW%20X1%20%282022-present%29.jpg?width=640"
-    },
-
-
-    {
-        name: "Jeep Compass S",
-
-        version: "1.3 T270 Turbo",
-
-        year: "2022",
-
-        km: "31.000 km",
-
-        price: "R$ 179.900",
-
-        image:
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Jeep%20Compass%20MP%20Shishi%2001%202022-05-18.jpg?width=640"
-    }
-
-];
+// a lista "cars" vem do cars.js (carregado antes deste arquivo no index.html)
 
 
 const heroCars = [
@@ -91,6 +26,9 @@ const heroCars = [
 
 
 let currentSlide = 0;
+
+// nomes dos carros favoritados pelo usuário logado
+const favorites = new Set();
 
 
 
@@ -120,7 +58,7 @@ function renderCars(list = cars) {
 
         card.innerHTML = `
 
-            <div class="car-image">
+            <div class="car-image" data-index="${index}" title="Ver detalhes">
 
                 <span class="car-tag">
                     SEMINOVO
@@ -188,6 +126,11 @@ function renderCars(list = cars) {
         `;
 
 
+        const heart = card.querySelector(".favorite");
+
+        heart.dataset.name = car.name;
+        paintFavorite(heart, favorites.has(car.name));
+
         carsGrid.appendChild(card);
 
     });
@@ -202,33 +145,114 @@ renderCars();
 // um único listener para todos os cards (delegação de eventos)
 carsGrid.addEventListener("click", event => {
 
-    const details = event.target.closest(".details-button");
-
-    if (details) {
-
-        const car = visibleCars[details.dataset.index];
-
-        alert(
-            car.name + "\n\n" +
-            car.version + "\n" +
-            "Ano: " + car.year + "\n" +
-            "Quilometragem: " + car.km + "\n\n" +
-            "Preço: " + car.price
-        );
-
-        return;
-    }
-
+    // coração: favoritar (não abre os detalhes)
     const favorite = event.target.closest(".favorite");
 
     if (favorite) {
-
-        const liked = favorite.textContent.trim() === "♡";
-
-        favorite.textContent = liked ? "♥️" : "♡";
-        favorite.style.color = liked ? "#ed142b" : "white";
+        toggleFavorite(favorite);
+        return;
     }
 
+    // foto, título ou botão: abre a tela do carro
+    const opener = event.target.closest(".details-button, .car-image, .car-info h3");
+
+    if (opener) {
+
+        const card  = opener.closest(".car-card");
+        const index = card.querySelector(".details-button").dataset.index;
+
+        openCar(visibleCars[index]);
+    }
+});
+
+
+/* ================= TELA DO CARRO (foto + informações) ================= */
+
+const carModal    = document.querySelector("#carModal");
+const carFavorite = document.querySelector("#carFavorite");
+
+let openedCar = null;
+
+
+function openCar(car) {
+
+    openedCar = car;
+
+    const image = document.querySelector("#carModalImage");
+
+    image.src = car.image;
+    image.alt = car.name;
+
+    document.querySelector("#carModalTitle").textContent   = car.name;
+    document.querySelector("#carModalVersion").textContent = car.version;
+    document.querySelector("#carModalPrice").textContent   = car.price;
+    document.querySelector("#carModalYear").textContent    = car.year;
+    document.querySelector("#carModalKm").textContent      = car.km;
+    document.querySelector("#carModalEngine").textContent  = car.version;
+
+    document.querySelector("#carModalLink").href = "veiculo.html?id=" + car.id;
+
+    paintCarFavorite();
+
+    carModal.classList.add("open");
+    carModal.setAttribute("aria-hidden", "false");
+
+    document.querySelector("#closeCar").focus();
+}
+
+
+function closeCar() {
+    carModal.classList.remove("open");
+    carModal.setAttribute("aria-hidden", "true");
+    openedCar = null;
+}
+
+
+function paintCarFavorite() {
+
+    if (!openedCar) return;
+
+    const liked = favorites.has(openedCar.name);
+
+    carFavorite.textContent = liked ? "♥ Nos favoritos" : "♡ Favoritar";
+}
+
+
+document.querySelector("#closeCar").addEventListener("click", closeCar);
+
+// fecha clicando no fundo escuro ou apertando ESC
+carModal.addEventListener("click", event => {
+    if (event.target === carModal) closeCar();
+});
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeCar();
+});
+
+
+carFavorite.addEventListener("click", async () => {
+
+    if (!openedCar) return;
+
+    // favoritar exige login
+    if (!authToken) {
+        closeCar();
+        openLogin();
+        return;
+    }
+
+    const heart = [...document.querySelectorAll(".favorite")]
+        .find(button => button.dataset.name === openedCar.name);
+
+    if (!heart) return;
+
+    const pending = toggleFavorite(heart);
+
+    paintCarFavorite();
+
+    await pending;
+
+    paintCarFavorite();
 });
 
 
@@ -662,15 +686,19 @@ registerForm.addEventListener("submit", async function(event) {
             return;
         }
 
+        // o cadastro já entra logado: guarda a sessão e volta para a tela inicial
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userName", data.name);
+
         showMessage(
             successMsg,
-            `Conta criada com sucesso, ${name.value.trim().split(" ")[0]}! 🎉`,
+            `Conta criada com sucesso, ${data.name.split(" ")[0]}! 🎉`,
             true
         );
 
         registerForm.reset();
 
-        setTimeout(closeRegister, 2000);
+        setTimeout(goHome, 1200);
 
     } catch (error) {
 
@@ -789,7 +817,7 @@ loginForm.addEventListener("submit", async function(event) {
 
         loginForm.reset();
 
-        setTimeout(closeLogin, 1500);
+        setTimeout(goHome, 1000);
 
     } catch (error) {
 
@@ -820,3 +848,140 @@ function showMessage(element, text, ok) {
     element.textContent = text;
     element.style.color = ok ? "#5bc96b" : "#ff4d5e";
 }
+
+
+
+/* ================= SESSÃO: AVATAR, LOGOUT E FAVORITOS ================= */
+
+const authToken = localStorage.getItem("token");
+
+const openLoginBtn    = document.querySelector("#openLogin");
+const openRegisterBtn = document.querySelector("#openRegister");
+const userBox         = document.querySelector("#userBox");
+const avatarImg       = document.querySelector("#avatarImg");
+const avatarInitial   = document.querySelector("#avatarInitial");
+
+
+// volta para a tela inicial já com a página atualizada
+function goHome() {
+    history.replaceState(null, "", "/");
+    window.location.reload();
+}
+
+
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    goHome();
+}
+
+document.querySelector("#logoutBtn").addEventListener("click", logout);
+
+
+// troca "Login / Criar conta" pelo avatar + Sair
+function showLoggedIn(name, avatar) {
+
+    openLoginBtn.hidden    = true;
+    openRegisterBtn.hidden = true;
+    userBox.hidden         = false;
+
+    avatarInitial.textContent = (name || "?").trim().charAt(0).toUpperCase();
+
+    if (avatar) {
+        avatarImg.src = avatar;
+        avatarImg.hidden = false;
+        avatarInitial.hidden = true;
+    }
+}
+
+
+function paintFavorite(button, liked) {
+    button.textContent = liked ? "♥️" : "♡";
+    button.style.color = liked ? "#ed142b" : "white";
+}
+
+
+async function toggleFavorite(button) {
+
+    // favoritar exige login
+    if (!authToken) {
+        openLogin();
+        return;
+    }
+
+    const name  = button.dataset.name;
+    const liked = !favorites.has(name);
+
+    // atualiza na hora e desfaz se o servidor recusar
+    liked ? favorites.add(name) : favorites.delete(name);
+    paintFavorite(button, liked);
+
+    try {
+
+        const response = await fetch(
+            liked ? "/api/me/favorites" : "/api/me/favorites?name=" + encodeURIComponent(name),
+            {
+                method: liked ? "POST" : "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + authToken
+                },
+                body: liked ? JSON.stringify({ name }) : undefined
+            }
+        );
+
+        if (response.status === 401) {
+            logout();
+            return;
+        }
+
+        if (!response.ok) throw new Error();
+
+    } catch (error) {
+
+        liked ? favorites.delete(name) : favorites.add(name);
+        paintFavorite(button, !liked);
+    }
+}
+
+
+async function loadSession() {
+
+    if (!authToken) return;
+
+    // mostra a inicial do nome na hora; a foto chega logo depois
+    showLoggedIn(localStorage.getItem("userName"), null);
+
+    try {
+
+        const response = await fetch("/api/me", {
+            headers: { Authorization: "Bearer " + authToken }
+        });
+
+        // sessão vencida: limpa e volta ao site deslogado
+        if (response.status === 401) {
+            logout();
+            return;
+        }
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        localStorage.setItem("userName", data.user.name);
+        showLoggedIn(data.user.name, data.user.avatar);
+
+        data.favorites.forEach(car => favorites.add(car.name));
+
+        document.querySelectorAll(".favorite").forEach(button => {
+            paintFavorite(button, favorites.has(button.dataset.name));
+        });
+
+        paintCarFavorite();
+
+    } catch (error) {
+        // sem conexão: continua com o que já está na tela
+    }
+}
+
+loadSession();

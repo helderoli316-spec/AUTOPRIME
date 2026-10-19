@@ -1,0 +1,438 @@
+/* Painel administrativo — usa as mesmas cores e fontes do site:
+   fundo #050506, cards #0c0c0f, bordas #202024, vermelho #ed142b, Montserrat nos títulos */
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* ---------- header ---------- */
+
+.header .header-actions {
+    display: flex;              /* no site some no celular; aqui precisa continuar visível */
+}
+
+.admin-link {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.admin-badge {
+    color: #999;
+    font-size: 11px;
+}
+
+@media(max-width: 750px) {
+
+    .header {
+        padding: 0 16px;
+        gap: 12px;
+    }
+
+    .logo {
+        width: auto;
+    }
+
+    .header .header-actions {
+        margin-left: auto;
+        gap: 8px;
+    }
+
+    .admin-badge {
+        display: none;
+    }
+}
+
+
+/* ---------- página ---------- */
+
+.admin {
+    padding: 32px 9% 50px;
+    background:
+        radial-gradient(circle at 85% 0%, #1a1a1f, #050506 45%);
+    min-height: calc(100vh - 100px);
+}
+
+.admin .eyebrow {
+    font-size: 11px;
+}
+
+.admin-title {
+    font-family: Montserrat;
+    font-size: 30px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin: 12px 0 6px;
+}
+
+.admin-title strong {
+    color: #ed142b;
+}
+
+.admin-status {
+    margin: 0 0 22px;
+    color: #999;
+    font-size: 13px;
+}
+
+.admin-status.error {
+    color: #ff4d5e;
+}
+
+
+/* ---------- indicadores ---------- */
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.kpi {
+    background: #0c0c0f;
+    border: 1px solid #202024;
+    border-left: 3px solid #ed142b;
+    padding: 18px 20px;
+}
+
+.kpi span {
+    display: block;
+    color: #999;
+    font-size: 12px;
+}
+
+.kpi strong {
+    display: block;
+    margin-top: 8px;
+    font-family: Montserrat;
+    font-size: 34px;
+    line-height: 1;
+}
+
+
+/* ---------- painéis e gráficos ---------- */
+
+.charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.panel {
+    background: #0c0c0f;
+    border: 1px solid #202024;
+    padding: 22px;
+    min-width: 0;
+}
+
+.panel:hover {
+    border-color: #650814;
+}
+
+.panel h2 {
+    font-family: Montserrat;
+    font-size: 17px;
+    margin: 0;
+}
+
+.panel h2 strong {
+    color: #ed142b;
+}
+
+.panel-note {
+    margin: 4px 0 16px;
+    color: #888;
+    font-size: 12px;
+}
+
+.chart {
+    min-height: 200px;
+}
+
+.chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: #777;
+    font-size: 13px;
+    text-align: center;
+    border: 1px dashed #29292e;
+}
+
+
+/* barras verticais (SVG) */
+
+.chart .grid-line {
+    stroke: #202024;
+    stroke-width: 1;
+}
+
+.chart .axis-text {
+    fill: #888;
+    font-size: 13px;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.chart .value-text {
+    fill: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.chart .bar {
+    fill: #ed142b;
+    transform-box: fill-box;
+    transform-origin: bottom;
+    animation: grow .6s ease-out;
+}
+
+.chart .bar:hover {
+    fill: #ff4d5e;
+}
+
+.chart .avg-line {
+    stroke: #fff;
+    stroke-width: 1.5;
+    stroke-dasharray: 6 5;
+    opacity: .7;
+}
+
+.chart .avg-text {
+    fill: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: Inter, Arial, sans-serif;
+}
+
+@keyframes grow {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+}
+
+
+/* barras horizontais (modelos) */
+
+.hbar {
+    margin-bottom: 14px;
+}
+
+.hbar-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.hbar-top span {
+    color: #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hbar-top strong {
+    color: #ed142b;
+}
+
+.hbar-track {
+    height: 10px;
+    background: #17171a;
+}
+
+.hbar-fill {
+    height: 100%;
+    width: 0;
+    background: #ed142b;
+    box-shadow: 0 0 12px #ed142b66;
+    transition: width .7s ease-out;
+}
+
+
+/* rosca (carros no site x vendidos) */
+
+.donut {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.donut svg {
+    width: 190px;
+    flex: none;
+}
+
+.donut .center-number {
+    fill: #fff;
+    font-family: Montserrat;
+    font-weight: 800;
+    font-size: 26px;
+}
+
+.donut .center-label {
+    fill: #888;
+    font-size: 10px;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.legend {
+    display: grid;
+    gap: 14px;
+    font-size: 13px;
+    color: #ddd;
+}
+
+.legend div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend i {
+    width: 12px;
+    height: 12px;
+    flex: none;
+    display: block;
+}
+
+.legend strong {
+    margin-left: auto;
+    padding-left: 14px;
+}
+
+
+/* ---------- tabela de usuários ---------- */
+
+.users-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.users-head input {
+    width: 260px;
+    max-width: 100%;
+    padding: 10px 12px;
+    background: #111113;
+    border: 1px solid #333338;
+    border-radius: 3px;
+    color: white;
+    font-size: 13px;
+    outline: none;
+}
+
+.users-head input:focus {
+    border-color: #ed142b;
+}
+
+.table-wrap {
+    max-height: 420px;
+    overflow: auto;
+    border: 1px solid #202024;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background: #111114;
+    text-align: left;
+    color: #999;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 11px 14px;
+    border-bottom: 2px solid #ed142b;
+}
+
+td {
+    padding: 11px 14px;
+    border-bottom: 1px solid #17171a;
+    color: #ddd;
+    word-break: break-word;
+}
+
+tbody tr:hover td {
+    background: #151519;
+}
+
+td.muted {
+    color: #888;
+    white-space: nowrap;
+}
+
+
+/* ---------- responsivo ---------- */
+
+@media(max-width: 1000px) {
+
+    .admin {
+        padding: 28px 25px 40px;
+    }
+
+    .kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width: 750px) {
+
+    .charts {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 500px) {
+
+    .admin {
+        padding: 24px 16px 36px;
+    }
+
+    .admin-title {
+        font-size: 24px;
+    }
+
+    .kpis {
+        gap: 12px;
+    }
+
+    .kpi {
+        padding: 14px;
+    }
+
+    .kpi strong {
+        font-size: 26px;
+    }
+
+    .panel {
+        padding: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .chart .bar {
+        animation: none;
+    }
+
+    .hbar-fill {
+        transition: none;
+    }
+}

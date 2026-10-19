@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auto Prime | Anúncio</title>
+
+    <style>
+        :root {
+            --fundo: #0a0a0c;
+            --painel: #141418;
+            --borda: #26262c;
+            --texto: #f2f2f4;
+            --suave: #9a9aa4;
+            --vermelho: #ed142b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--fundo);
+            color: var(--texto);
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+        }
+
+        header {
+            border-bottom: 1px solid var(--borda);
+            padding: 18px 24px;
+        }
+
+        header a {
+            color: var(--texto);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        header a span { color: var(--vermelho); }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px 64px;
+        }
+
+        .voltar {
+            display: inline-block;
+            color: var(--suave);
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .voltar:hover,
+        .voltar:focus-visible { color: var(--texto); }
+
+        .anuncio {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        .foto {
+            background: var(--painel);
+            border: 1px solid var(--borda);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .foto img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .dados {
+            background: var(--painel);
+            border: 1px solid var(--borda);
+            border-radius: 6px;
+            padding: 28px;
+        }
+
+        .dados h1 { font-size: 28px; line-height: 1.2; }
+
+        .versao { color: var(--suave); margin-top: 6px; }
+
+        .preco {
+            color: var(--vermelho);
+            font-size: 34px;
+            font-weight: 800;
+            margin: 20px 0;
+        }
+
+        dl {
+            border-top: 1px solid var(--borda);
+            padding-top: 16px;
+        }
+
+        dl div {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        dt { color: var(--suave); }
+        dd { font-weight: 600; }
+
+        .botao {
+            display: block;
+            margin-top: 24px;
+            padding: 14px;
+            text-align: center;
+            background: var(--vermelho);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        .botao:hover,
+        .botao:focus-visible { filter: brightness(1.15); }
+
+        .erro { text-align: center; padding: 80px 0; }
+        .erro p { color: var(--suave); margin: 12px 0 24px; }
+
+        @media (max-width: 800px) {
+            .anuncio { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="index.html">AUTO<span>PRIME</span></a>
+    </header>
+
+    <main>
+        <a class="voltar" href="index.html">← Voltar para os veículos</a>
+
+        <div id="anuncio"></div>
+    </main>
+
+    <script src="cars.js"></script>
+
+    <script>
+        const id = Number(new URLSearchParams(window.location.search).get("id"));
+        const car = cars.find(c => c.id === id);
+        const area = document.querySelector("#anuncio");
+
+        if (!car) {
+
+            document.title = "Auto Prime | Veículo não encontrado";
+
+            area.innerHTML = `
+                <div class="erro">
+                    <h1>Veículo não encontrado</h1>
+                    <p>Esse anúncio não existe ou foi removido.</p>
+                    <a class="botao" href="index.html">Ver todos os veículos</a>
+                </div>
+            `;
+
+        } else {
+
+            document.title = car.name + " | Auto Prime";
+
+            // usa a foto grande (campo "foto" no cars.js) se existir;
+            // se não existir, usa a mesma foto dos cards
+            const fotoGrande = car.foto || car.image;
+
+            area.innerHTML = `
+                <section class="anuncio">
+
+                    <div class="foto">
+                        <img src="${fotoGrande}" alt="${car.name}">
+                    </div>
+
+                    <div class="dados">
+                        <h1>${car.name}</h1>
+                        <p class="versao">${car.version}</p>
+
+                        <p class="preco">${car.price}</p>
+
+                        <dl>
+                            <div><dt>Ano</dt><dd>${car.year}</dd></div>
+                            <div><dt>Quilometragem</dt><dd>${car.km}</dd></div>
+                            <div><dt>Motor</dt><dd>${car.version}</dd></div>
+                            <div><dt>Condição</dt><dd>Seminovo</dd></div>
+                        </dl>
+
+                        <a class="botao" href="index.html">Ver outros veículos</a>
+                    </div>
+
+                </section>
+            `;
+        }
+    </script>
+
+</body>
+</html>

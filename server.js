@@ -290,9 +290,9 @@ app.get("/api/me", requireAuth, async (req, res) => {
             ),
 
             pool.query(`
-                SELECT c.name, c.version, c.year, c.km, c.price
+                SELECT f.car_name AS name, c.version, c.year, c.km, c.price
                 FROM favorites f
-                JOIN cars c ON c.name = f.car_name
+                LEFT JOIN cars c ON c.name = f.car_name
                 WHERE f.user_id = $1
                 ORDER BY f.created_at DESC
             `, [id]),
@@ -359,23 +359,21 @@ app.delete("/api/me/avatar", requireAuth, async (req, res) => {
 });
 
 
-// favoritos (a chave é o nome do carro, que é único na tabela cars)
+// favoritos (a chave é o nome do carro, igual ao que está no cars.js)
 app.post("/api/me/favorites", requireAuth, async (req, res) => {
 
     const name = String(req.body.name || "").trim();
 
+    if (!name || name.length > 100) {
+        return res.status(400).json({ error: "Carro inválido." });
+    }
+
     try {
-        const result = await pool.query(`
+        await pool.query(`
             INSERT INTO favorites (user_id, car_name)
-            SELECT $1, name FROM cars WHERE name = $2
+            VALUES ($1, $2)
             ON CONFLICT DO NOTHING
         `, [req.user.id, name]);
-
-        // rowCount 0 pode ser "já era favorito"; só dá erro se o carro não existe
-        if (!result.rowCount) {
-            const exists = await pool.query("SELECT 1 FROM cars WHERE name = $1", [name]);
-            if (!exists.rowCount) return res.status(404).json({ error: "Carro não encontrado." });
-        }
 
         res.json({ ok: true });
 
