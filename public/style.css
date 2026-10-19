@@ -116,7 +116,7 @@ input {
 
     text-decoration: none;
 
-    font-size: 14px;
+    font-size: 12px;
 
     height: 100%;
 
@@ -193,7 +193,7 @@ input {
 
     border-radius: 4px;
 
-    font-size: 13px;
+    font-size: 11px;
 
     cursor: pointer;
 }
@@ -211,7 +211,7 @@ input {
 
     border-radius: 4px;
 
-    font-size: 13px;
+    font-size: 11px;
 
     cursor: pointer;
 }
@@ -341,7 +341,7 @@ input {
 
     color: #aaa;
 
-    font-size: 14px;
+    font-size: 10px;
 
     line-height: 1.5;
 }
@@ -389,7 +389,7 @@ input {
 
     color: white;
 
-    font-size: 13px;
+    font-size: 10px;
 }
 
 
@@ -405,7 +405,7 @@ input {
 
     cursor: pointer;
 
-    font-size: 13px;
+    font-size: 10px;
 
     font-weight: 700;
 }
@@ -445,7 +445,7 @@ input {
 
     color: #ddd;
 
-    font-size: 11px;
+    font-size: 7px;
 
     font-weight: 700;
 
@@ -714,7 +714,7 @@ input {
 
     border-radius: 3px;
 
-    font-size: 11px;
+    font-size: 9px;
 
     cursor: pointer;
 }
@@ -869,7 +869,7 @@ input {
 
     margin: 0 0 5px;
 
-    font-size: 14px;
+    font-size: 11px;
 }
 
 
@@ -877,7 +877,7 @@ input {
 
     color: #888;
 
-    font-size: 10px;
+    font-size: 7px;
 
     margin-bottom: 12px;
 }
@@ -897,7 +897,7 @@ input {
 
     color: #ed142b;
 
-    font-size: 17px;
+    font-size: 14px;
 
     font-weight: 800;
 }
@@ -911,9 +911,9 @@ input {
 
     color: white;
 
-    padding: 7px 11px;
+    padding: 6px 9px;
 
-    font-size: 14px;
+    font-size: 7px;
 
     cursor: pointer;
 }
@@ -1024,7 +1024,7 @@ input {
 
     color: #999;
 
-    font-size: 11px;
+    font-size: 8px;
 
     line-height: 1.6;
 }
@@ -1060,7 +1060,7 @@ input {
 
     color: #888;
 
-    font-size: 10px;
+    font-size: 7px;
 }
 
 
@@ -1617,4 +1617,77 @@ footer {
 
 .switch-text a:hover {
     text-decoration: underline;
+}
+
+
+
+/* ================= USUÁRIO LOGADO (avatar e sair) ================= */
+
+[hidden] {
+    display: none !important;
+}
+
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-btn {
+    width: 38px;
+    height: 38px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #ed142b;
+    background: #17171a;
+    color: white;
+    font-family: Montserrat;
+    font-weight: 800;
+    font-size: 15px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.avatar-btn:hover {
+    border-color: #ff4d5e;
+}
+
+.avatar-btn img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* celular: mantém Login / avatar visíveis no topo */
+@media(max-width: 750px) {
+
+    .header {
+        padding: 0 16px;
+        gap: 12px;
+    }
+
+    .logo {
+        width: auto;
+    }
+
+    .header .header-actions {
+        display: flex;
+        margin-left: auto;
+        gap: 8px;
+    }
+
+    .header-actions .search-icon,
+    .header-actions .quality,
+    #openRegister {
+        display: none;
+    }
+
+    .menu-btn {
+        margin-left: 0;
+    }
 }

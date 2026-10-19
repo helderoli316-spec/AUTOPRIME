@@ -92,6 +92,9 @@ const heroCars = [
 
 let currentSlide = 0;
 
+// nomes dos carros favoritados pelo usuário logado
+const favorites = new Set();
+
 
 
 
@@ -188,6 +191,11 @@ function renderCars(list = cars) {
         `;
 
 
+        const heart = card.querySelector(".favorite");
+
+        heart.dataset.name = car.name;
+        paintFavorite(heart, favorites.has(car.name));
+
         carsGrid.appendChild(card);
 
     });
@@ -222,11 +230,7 @@ carsGrid.addEventListener("click", event => {
     const favorite = event.target.closest(".favorite");
 
     if (favorite) {
-
-        const liked = favorite.textContent.trim() === "♡";
-
-        favorite.textContent = liked ? "♥️" : "♡";
-        favorite.style.color = liked ? "#ed142b" : "white";
+        toggleFavorite(favorite);
     }
 
 });
@@ -662,15 +666,19 @@ registerForm.addEventListener("submit", async function(event) {
             return;
         }
 
+        // o cadastro já entra logado: guarda a sessão e volta para a tela inicial
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userName", data.name);
+
         showMessage(
             successMsg,
-            `Conta criada com sucesso, ${name.value.trim().split(" ")[0]}! 🎉`,
+            `Conta criada com sucesso, ${data.name.split(" ")[0]}! 🎉`,
             true
         );
 
         registerForm.reset();
 
-        setTimeout(closeRegister, 2000);
+        setTimeout(goHome, 1200);
 
     } catch (error) {
 
@@ -789,7 +797,7 @@ loginForm.addEventListener("submit", async function(event) {
 
         loginForm.reset();
 
-        setTimeout(closeLogin, 1500);
+        setTimeout(goHome, 1000);
 
     } catch (error) {
 
@@ -820,3 +828,138 @@ function showMessage(element, text, ok) {
     element.textContent = text;
     element.style.color = ok ? "#5bc96b" : "#ff4d5e";
 }
+
+
+
+/* ================= SESSÃO: AVATAR, LOGOUT E FAVORITOS ================= */
+
+const authToken = localStorage.getItem("token");
+
+const openLoginBtn    = document.querySelector("#openLogin");
+const openRegisterBtn = document.querySelector("#openRegister");
+const userBox         = document.querySelector("#userBox");
+const avatarImg       = document.querySelector("#avatarImg");
+const avatarInitial   = document.querySelector("#avatarInitial");
+
+
+// volta para a tela inicial já com a página atualizada
+function goHome() {
+    history.replaceState(null, "", "/");
+    window.location.reload();
+}
+
+
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    goHome();
+}
+
+document.querySelector("#logoutBtn").addEventListener("click", logout);
+
+
+// troca "Login / Criar conta" pelo avatar + Sair
+function showLoggedIn(name, avatar) {
+
+    openLoginBtn.hidden    = true;
+    openRegisterBtn.hidden = true;
+    userBox.hidden         = false;
+
+    avatarInitial.textContent = (name || "?").trim().charAt(0).toUpperCase();
+
+    if (avatar) {
+        avatarImg.src = avatar;
+        avatarImg.hidden = false;
+        avatarInitial.hidden = true;
+    }
+}
+
+
+function paintFavorite(button, liked) {
+    button.textContent = liked ? "♥️" : "♡";
+    button.style.color = liked ? "#ed142b" : "white";
+}
+
+
+async function toggleFavorite(button) {
+
+    // favoritar exige login
+    if (!authToken) {
+        openLogin();
+        return;
+    }
+
+    const name  = button.dataset.name;
+    const liked = !favorites.has(name);
+
+    // atualiza na hora e desfaz se o servidor recusar
+    liked ? favorites.add(name) : favorites.delete(name);
+    paintFavorite(button, liked);
+
+    try {
+
+        const response = await fetch(
+            liked ? "/api/me/favorites" : "/api/me/favorites?name=" + encodeURIComponent(name),
+            {
+                method: liked ? "POST" : "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + authToken
+                },
+                body: liked ? JSON.stringify({ name }) : undefined
+            }
+        );
+
+        if (response.status === 401) {
+            logout();
+            return;
+        }
+
+        if (!response.ok) throw new Error();
+
+    } catch (error) {
+
+        liked ? favorites.delete(name) : favorites.add(name);
+        paintFavorite(button, !liked);
+    }
+}
+
+
+async function loadSession() {
+
+    if (!authToken) return;
+
+    // mostra a inicial do nome na hora; a foto chega logo depois
+    showLoggedIn(localStorage.getItem("userName"), null);
+
+    try {
+
+        const response = await fetch("/api/me", {
+            headers: { Authorization: "Bearer " + authToken }
+        });
+
+        // sessão vencida: limpa e volta ao site deslogado
+        if (response.status === 401) {
+            logout();
+            return;
+        }
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        localStorage.setItem("userName", data.user.name);
+        showLoggedIn(data.user.name, data.user.avatar);
+
+        data.favorites.forEach(car => favorites.add(car.name));
+
+        document.querySelectorAll(".favorite").forEach(button => {
+            paintFavorite(button, favorites.has(button.dataset.name));
+        });
+
+    } catch (error) {
+        // sem conexão: continua com o que já está na tela
+    }
+}
+
+loadSession();

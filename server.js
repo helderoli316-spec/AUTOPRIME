@@ -29,17 +29,32 @@ const pool = new Pool({
 const app = express();
 
 app.set("trust proxy", 1);          // o Railway fica na frente do servidor
-app.use(express.json({ limit: "10kb" }));
+const smallJson = express.json({ limit: "10kb" });
+
+// a rota do avatar usa um limite maior (definido nela mesma)
+app.use((req, res, next) =>
+    req.path === "/api/me/avatar" ? next() : smallJson(req, res, next)
+);
 
 
-// limita tentativas para dificultar força bruta
+// limite geral da API (folgado, para o perfil e os favoritos funcionarem bem)
 app.use("/api", rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 600,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Muitas requisições. Tente novamente em alguns minutos." }
+}));
+
+// limite rígido só para login e cadastro: dificulta força bruta
+app.use(["/api/login", "/api/register"], rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 30,
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: "Muitas tentativas. Tente novamente em alguns minutos." }
 }));
+
 
 
 // ---------- API ----------
@@ -61,12 +76,18 @@ app.post("/api/register", async (req, res) => {
     try {
         const hash = await bcrypt.hash(password, 10);
 
-        await pool.query(
-            "INSERT INTO users (name, email, phone, password_hash) VALUES ($1, $2, $3, $4)",
+        const { rows } = await pool.query(
+            "INSERT INTO users (name, email, phone, password_hash) VALUES ($1, $2, $3, $4) RETURNING id",
             [name, email, phone, hash]
         );
 
-        res.status(201).json({ ok: true });
+        const token = jwt.sign(
+            { id: rows[0].id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.status(201).json({ ok: true, token, name, admin: email === ADMIN_EMAIL });
 
     } catch (error) {
 
@@ -118,33 +139,48 @@ app.post("/api/login", async (req, res) => {
 
 // ---------- ADMINISTRADOR ----------
 
-// confere o token E confere no banco se o dono do token é o administrador
-async function requireAdmin(req, res, next) {
+// confere o token e confere no banco se o usuário ainda existe
+async function requireAuth(req, res, next) {
 
     const header = req.headers.authorization || "";
     const token  = header.startsWith("Bearer ") ? header.slice(7) : "";
+
+    let user;
 
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ["HS256"] });
 
         const { rows } = await pool.query(
-            "SELECT email FROM users WHERE id = $1",
+            "SELECT id, email FROM users WHERE id = $1",
             [payload.id]
         );
 
-        if (!rows[0]) {
-            return res.status(401).json({ error: "Sessão inválida." });
-        }
+        user = rows[0];
 
-        if (rows[0].email !== ADMIN_EMAIL) {
+    } catch (error) {
+        return res.status(401).json({ error: "Sessão expirada. Faça login novamente." });
+    }
+
+    if (!user) {
+        return res.status(401).json({ error: "Sessão inválida." });
+    }
+
+    req.user = user;
+    next();
+}
+
+
+// além de estar logado, precisa ser o e-mail do administrador
+function requireAdmin(req, res, next) {
+
+    requireAuth(req, res, () => {
+
+        if (req.user.email !== ADMIN_EMAIL) {
             return res.status(403).json({ error: "Acesso negado." });
         }
 
         next();
-
-    } catch (error) {
-        res.status(401).json({ error: "Sessão expirada. Faça login novamente." });
-    }
+    });
 }
 
 
@@ -235,6 +271,209 @@ app.get("/api/admin/stats", requireAdmin, async (req, res) => {
     }
 });
 
+
+// ---------- USUÁRIO LOGADO (perfil, avatar, favoritos, anúncios) ----------
+
+// tudo que a tela de perfil precisa, em uma chamada só
+app.get("/api/me", requireAuth, async (req, res) => {
+
+    res.set("Cache-Control", "no-store");
+
+    try {
+        const id = req.user.id;
+
+        const [user, favorites, purchases, listings] = await Promise.all([
+
+            pool.query(
+                "SELECT name, email, phone, avatar, created_at FROM users WHERE id = $1",
+                [id]
+            ),
+
+            pool.query(`
+                SELECT c.name, c.version, c.year, c.km, c.price
+                FROM favorites f
+                JOIN cars c ON c.name = f.car_name
+                WHERE f.user_id = $1
+                ORDER BY f.created_at DESC
+            `, [id]),
+
+            pool.query(`
+                SELECT id, model AS name, price, sold_at
+                FROM sales
+                WHERE user_id = $1
+                ORDER BY sold_at DESC, id DESC
+            `, [id]),
+
+            pool.query(`
+                SELECT id, name, version, year, km, price, created_at
+                FROM listings
+                WHERE user_id = $1
+                ORDER BY created_at DESC
+            `, [id])
+        ]);
+
+        res.json({
+            user:      user.rows[0],
+            favorites: favorites.rows,
+            purchases: purchases.rows,
+            listings:  listings.rows
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao carregar o perfil." });
+    }
+});
+
+
+// avatar: o navegador reduz a foto para 256x256 JPEG antes de enviar
+app.put("/api/me/avatar", requireAuth, express.json({ limit: "300kb" }), async (req, res) => {
+
+    const image = String(req.body.image || "");
+
+    if (!/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(image) || image.length > 250000) {
+        return res.status(400).json({ error: "Imagem inválida ou grande demais." });
+    }
+
+    try {
+        await pool.query("UPDATE users SET avatar = $1 WHERE id = $2", [image, req.user.id]);
+        res.json({ ok: true });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Não foi possível salvar a foto." });
+    }
+});
+
+
+app.delete("/api/me/avatar", requireAuth, async (req, res) => {
+
+    try {
+        await pool.query("UPDATE users SET avatar = NULL WHERE id = $1", [req.user.id]);
+        res.json({ ok: true });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro no servidor." });
+    }
+});
+
+
+// favoritos (a chave é o nome do carro, que é único na tabela cars)
+app.post("/api/me/favorites", requireAuth, async (req, res) => {
+
+    const name = String(req.body.name || "").trim();
+
+    try {
+        const result = await pool.query(`
+            INSERT INTO favorites (user_id, car_name)
+            SELECT $1, name FROM cars WHERE name = $2
+            ON CONFLICT DO NOTHING
+        `, [req.user.id, name]);
+
+        // rowCount 0 pode ser "já era favorito"; só dá erro se o carro não existe
+        if (!result.rowCount) {
+            const exists = await pool.query("SELECT 1 FROM cars WHERE name = $1", [name]);
+            if (!exists.rowCount) return res.status(404).json({ error: "Carro não encontrado." });
+        }
+
+        res.json({ ok: true });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro no servidor." });
+    }
+});
+
+
+app.delete("/api/me/favorites", requireAuth, async (req, res) => {
+
+    const name = String(req.query.name || "").trim();
+
+    try {
+        await pool.query(
+            "DELETE FROM favorites WHERE user_id = $1 AND car_name = $2",
+            [req.user.id, name]
+        );
+
+        res.json({ ok: true });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro no servidor." });
+    }
+});
+
+
+// carros que o usuário está vendendo
+app.post("/api/me/listings", requireAuth, async (req, res) => {
+
+    const name    = String(req.body.name || "").trim();
+    const version = String(req.body.version || "").trim();
+    const year    = Number(req.body.year);
+    const km      = Number(req.body.km);
+    const price   = Number(req.body.price);
+
+    const thisYear = new Date().getFullYear();
+
+    if (
+        name.length < 3 || name.length > 80 ||
+        version.length > 60 ||
+        !Number.isInteger(year)  || year < 1950 || year > thisYear + 1 ||
+        !Number.isInteger(km)    || km < 0 || km > 2000000 ||
+        !Number.isFinite(price)  || price <= 0 || price > 100000000
+    ) {
+        return res.status(400).json({ error: "Confira os dados do carro." });
+    }
+
+    try {
+        const count = await pool.query(
+            "SELECT COUNT(*)::int AS total FROM listings WHERE user_id = $1",
+            [req.user.id]
+        );
+
+        if (count.rows[0].total >= 20) {
+            return res.status(400).json({ error: "Limite de 20 anúncios atingido." });
+        }
+
+        const { rows } = await pool.query(`
+            INSERT INTO listings (user_id, name, version, year, km, price)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id, name, version, year, km, price, created_at
+        `, [req.user.id, name, version, year, km, price]);
+
+        res.status(201).json(rows[0]);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Não foi possível publicar o anúncio." });
+    }
+});
+
+
+app.delete("/api/me/listings/:id", requireAuth, async (req, res) => {
+
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: "Anúncio inválido." });
+    }
+
+    try {
+        await pool.query(
+            "DELETE FROM listings WHERE id = $1 AND user_id = $2",
+            [id, req.user.id]
+        );
+
+        res.json({ ok: true });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro no servidor." });
+    }
+});
+
+
 // ---------- site (arquivos da pasta public) ----------
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -274,6 +513,34 @@ async function init() {
             model   TEXT NOT NULL,
             price   NUMERIC(12,2),
             sold_at DATE NOT NULL DEFAULT CURRENT_DATE
+        )
+    `);
+
+    // novidades do perfil (seguro rodar várias vezes)
+    await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar TEXT");
+
+    // quem comprou o carro (opcional); aparece em "Carros comprados" no perfil
+    await pool.query("ALTER TABLE sales ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL");
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS favorites (
+            user_id    INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            car_name   TEXT NOT NULL,
+            created_at TIMESTAMPTZ DEFAULT now(),
+            PRIMARY KEY (user_id, car_name)
+        )
+    `);
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS listings (
+            id         SERIAL PRIMARY KEY,
+            user_id    INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            name       TEXT NOT NULL,
+            version    TEXT,
+            year       INT,
+            km         INT,
+            price      NUMERIC(12,2),
+            created_at TIMESTAMPTZ DEFAULT now()
         )
     `);
 

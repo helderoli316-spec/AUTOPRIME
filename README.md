@@ -22,3 +22,11 @@ Site em Node.js (Express) + PostgreSQL, pronto para o Railway.
 - Variáveis: `ADMIN_EMAIL` (opcional) e `SEED_DEMO=true` (opcional, só para teste: cria vendas fictícias; remova depois).
 - Para registrar uma venda real, rode no Postgres (Railway → Database → Data → Query):
   `INSERT INTO sales (model, price, sold_at) VALUES ('BMW X1 sDrive20i', 219900, '2026-09-10');`
+- Para a venda aparecer em "Carros comprados" no perfil do cliente, informe o comprador:
+  `INSERT INTO sales (model, price, sold_at, user_id) VALUES ('BMW X1 sDrive20i', 219900, '2026-09-10', (SELECT id FROM users WHERE email = 'cliente@email.com'));`
+
+## Área do usuário
+- Depois de fazer login ou criar a conta, o usuário volta para a tela inicial e vê o avatar no topo.
+- Clicar no avatar abre `/perfil.html`: dados, foto, carros comprados, favoritos e carros que está vendendo.
+- O botão "Sair" (no topo do site e no perfil) encerra a sessão.
+- As tabelas novas (`favorites`, `listings`) e a coluna `users.avatar` são criadas sozinhas ao iniciar o servidor.
