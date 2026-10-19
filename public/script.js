@@ -216,13 +216,7 @@ carsGrid.addEventListener("click", event => {
 
         const car = visibleCars[details.dataset.index];
 
-        alert(
-            car.name + "\n\n" +
-            car.version + "\n" +
-            "Ano: " + car.year + "\n" +
-            "Quilometragem: " + car.km + "\n\n" +
-            "Preço: " + car.price
-        );
+        window.location.href = "veiculo.html?id=" + car.id;
 
         return;
     }
